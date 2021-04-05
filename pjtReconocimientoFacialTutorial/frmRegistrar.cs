@@ -24,7 +24,7 @@ namespace pjtReconocimientoFacialTutorial
         Capture Grabar;
         HaarCascade face;//Rostro
         MCvFont font = new MCvFont(FONT.CV_FONT_HERSHEY_TRIPLEX, 0.4d, 0.4d);
-        Image<Gray, byte> result,TraineFace = null;
+        Image<Gray, byte> result, TraineFace = null;
         Image<Gray, byte> gray = null;
         List<Image<Gray, byte>> trainingImages = new List<Image<Gray, byte>>();
         List<string> labels = new List<string>();
@@ -41,24 +41,26 @@ namespace pjtReconocimientoFacialTutorial
 
             try
             {
-                currentFrame = Grabar.QueryFrame().Resize(320, 240, INTER.CV_INTER_CUBIC);
+                currentFrame = Grabar.QueryFrame().Resize(200, 200, INTER.CV_INTER_CUBIC);
 
                 gray = currentFrame.Convert<Gray, Byte>();
 
-                MCvAvgComp[][] RostrosDetectados = gray.DetectHaarCascade(face, 1.2, 3, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, Size.Empty);
+                //MCvAvgComp[][] RostrosDetectados = gray.DetectHaarCascade(face, 1.2, 3, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, Size.Empty);
+                MCvAvgComp[][] rostrosDetectados = gray.DetectHaarCascade(face, 1.3, 1, HAAR_DETECTION_TYPE.SCALE_IMAGE,
+                    new Size(currentFrame.Width / 8, currentFrame.Height / 8));
 
-                foreach (MCvAvgComp R in RostrosDetectados[0])
+                foreach (MCvAvgComp R in rostrosDetectados[0])
                 {
                     t = t + 1;
                     result = currentFrame.Copy(R.rect).Convert<Gray, byte>().Resize(100, 100, INTER.CV_INTER_CUBIC);
                     currentFrame.Draw(R.rect, new Bgr(Color.Green), 1);
 
-                   
+
 
                     NombrePersonas[t - 1] = Nombre;
                     NombrePersonas.Add("");
 
-                    lblCantidad.Text = RostrosDetectados[0].Length.ToString();
+                    lblCantidad.Text = rostrosDetectados[0].Length.ToString();
                 }
                 t = 0;
                 imageBox1.Image = currentFrame;
@@ -80,7 +82,7 @@ namespace pjtReconocimientoFacialTutorial
                 Grabar = new Capture();
                 Grabar.QueryFrame();
                 Application.Idle += FrameGrabar;
-                
+
             }
             catch (Exception Error)
             {
@@ -113,9 +115,10 @@ namespace pjtReconocimientoFacialTutorial
                 gray = currentFrame.Convert<Gray, Byte>();
 
                 //MCvAvgComp[][] RostrosDetectados = gray.DetectHaarCascade(face, 1.2, 10, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20));
-                MCvAvgComp[][] RostrosDetectados = gray.DetectHaarCascade(face, 1.1, 3, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, Size.Empty);
+                MCvAvgComp[][] rostrosDetectados = gray.DetectHaarCascade(face, 1.3, 1, HAAR_DETECTION_TYPE.SCALE_IMAGE,
+                    new Size(currentFrame.Width / 8, currentFrame.Height / 8));
 
-                foreach (MCvAvgComp R in RostrosDetectados[0])
+                foreach (MCvAvgComp R in rostrosDetectados[0])
                 {
 
                     TraineFace = currentFrame.Copy(R.rect).Convert<Gray, byte>().Resize(100, 100, INTER.CV_INTER_CUBIC);
@@ -130,8 +133,8 @@ namespace pjtReconocimientoFacialTutorial
             catch
             {
 
-               
-            } 
+
+            }
         }
 
         private void brnRegistrar_Click(object sender, EventArgs e)
@@ -141,7 +144,7 @@ namespace pjtReconocimientoFacialTutorial
                 labels.Add(txtNombre.Text);
                 clsDA.GuardarImagen(txtNombre.Text, clsDA.ConvertImgToBinary(imageBox2.Image.Bitmap));
 
-               
+
             }
 
             clsDA.Consultar(dataGridView1);
@@ -181,7 +184,7 @@ namespace pjtReconocimientoFacialTutorial
             catch (Exception e)
             {
 
-                MessageBox.Show("Error" +e);
+                MessageBox.Show("Error" + e);
             }
         }
 

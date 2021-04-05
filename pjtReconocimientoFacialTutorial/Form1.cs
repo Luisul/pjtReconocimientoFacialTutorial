@@ -82,12 +82,12 @@ namespace pjtReconocimientoFacialTutorial
 
             try
             {
-                currentFrame = Grabar.QueryFrame().Resize(320, 240, INTER.CV_INTER_CUBIC);
+                currentFrame = Grabar.QueryFrame().Resize(200, 200, INTER.CV_INTER_CUBIC);
 
                 gray = currentFrame.Convert<Gray, byte>();
 
-                //MCvAvgComp[][] RostrosDetectados = gray.DetectHaarCascade(face, 1.2, 10, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20));
-                MCvAvgComp[][] rostrosDetectados = gray.DetectHaarCascade(face, 1.2, 3, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20));
+                //MCvAvgComp[][] rostrosDetectados = gray.DetectHaarCascade(face, 1.2, 10, HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20));
+                MCvAvgComp[][] rostrosDetectados = gray.DetectHaarCascade(face, 1.3, 1, HAAR_DETECTION_TYPE.SCALE_IMAGE, new Size(currentFrame.Width / 8, currentFrame.Height / 8));
 
                 foreach (MCvAvgComp R in rostrosDetectados[0])
                 {
@@ -97,7 +97,7 @@ namespace pjtReconocimientoFacialTutorial
 
                     if (trainingImages.ToArray().Length != 0)
                     {
-                        MCvTermCriteria Criterio = new MCvTermCriteria(ContTrain, 0.66);
+                        MCvTermCriteria Criterio = new MCvTermCriteria(ContTrain, 0.001);
 
                         EigenObjectRecognizer recogida = new EigenObjectRecognizer(trainingImages.ToArray(), labels.ToArray(), ref Criterio);
                         var fa = new Image<Gray, byte>[trainingImages.Count];

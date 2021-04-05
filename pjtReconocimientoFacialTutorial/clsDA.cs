@@ -65,12 +65,13 @@ namespace pjtReconocimientoFacialTutorial
             DATA.DataSource = dt;
             int Cont = dt.Rows.Count;
             Nombre = new string[Cont];
+            Rostro = new byte[Cont];
             cnx.Close();
             for (int i = 0; i < Cont; i++)
             {
                 Nombre[i] = dt.Rows[i]["Nombre"].ToString();
                 //var result = dt.Rows[0]["Imagen"];
-                Rostro = (byte[])dt.Rows[0]["Imagen"];
+                Rostro = (byte[])dt.Rows[i]["Imagen"];
                 //Rostro = Convert.FromBase64String(result.ToString());
                 ListadoRostros.Add(Rostro);
 
@@ -119,6 +120,8 @@ namespace pjtReconocimientoFacialTutorial
         {
             Image Imagen;
             byte[] img = ListadoRostros[C];
+
+             var image = Convert.ToBase64String(img);
             MemoryStream Memoria = new MemoryStream(img);
             Imagen = Image.FromStream(Memoria);
             Memoria.Close();
